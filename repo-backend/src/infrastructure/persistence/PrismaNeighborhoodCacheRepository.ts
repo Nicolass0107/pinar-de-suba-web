@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import type { NeighborhoodInfo } from "../../domain/entities/NeighborhoodInfo.js";
 import type { INeighborhoodCacheRepository } from "../../domain/repositories/INeighborhoodCacheRepository.js";
 import { prisma } from "./PrismaClient.js";
@@ -19,10 +20,11 @@ export class PrismaNeighborhoodCacheRepository implements INeighborhoodCacheRepo
   }
 
   async save(info: NeighborhoodInfo): Promise<void> {
+    const geometry = info.geometry as unknown as Prisma.InputJsonValue;
     await prisma.neighborhoodCache.upsert({
       where: { id: "pinar-de-suba" },
-      update: { ...info, geometry: info.geometry },
-      create: { id: "pinar-de-suba", ...info, geometry: info.geometry },
+      update: { ...info, geometry },
+      create: { id: "pinar-de-suba", ...info, geometry },
     });
   }
 }
