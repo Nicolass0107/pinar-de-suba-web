@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pinar-suba-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pinar
+      POSTGRES_PASSWORD: pinar
+      POSTGRES_DB: pinar_suba
+    ports:
+      - "5432:5432"
+    volumes:
+      - pinar_suba_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pinar -d pinar_suba"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pinar_suba_pgdata:

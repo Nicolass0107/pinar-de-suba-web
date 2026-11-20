@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model News {
+  id          String   @id @default(uuid())
+  title       String
+  summary     String
+  content     String
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
+model PointOfInterest {
+  id          String   @id @default(uuid())
+  name        String
+  category    String
+  description String?
+  latitude    Float
+  longitude   Float
+  createdAt   DateTime @default(now())
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  category    String
+  latitude    Float?
+  longitude   Float?
+  status      String   @default("OPEN")
+  createdAt   DateTime @default(now())
+}
+
+model NeighborhoodCache {
+  id                String   @id @default("pinar-de-suba")
+  name              String
+  locality          String
+  city              String
+  sectorCatastralId String
+  areaM2            Float
+  perimeterM        Float
+  geometry          Json
+  source            String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
