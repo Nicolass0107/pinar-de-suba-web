@@ -2,6 +2,10 @@ import type { GeoJsonGeometry, NeighborhoodInfo } from "../../domain/entities/Ne
 import { computeGeoMetrics } from "./geoMetrics.js";
 
 export type RawRecord = Record<string, any>;
+const norm = (v: unknown) => String(v ?? "").toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+const FALLBACK: GeoJsonGeometry = { type: "Polygon", coordinates: [[
+  [-74.0945, 4.7458], [-74.0945, 4.7535], [-74.0805, 4.7535], [-74.0805, 4.7458], [-74.0945, 4.7458],
+]] };
 
 export function extractRecords(data: any): RawRecord[] {
   if (Array.isArray(data)) return data;
@@ -9,38 +13,41 @@ export function extractRecords(data: any): RawRecord[] {
   return data ? [data] : [];
 }
 
-const norm = (v: unknown) => String(v ?? "").toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+function propsOf(r: RawRecord) { return r?.properties ? { ...r.properties, geometry: r.geometry ?? r.properties.geometry } : r ?? {}; }
+function nameOf(r: RawRecord) { const p = propsOf(r); return norm(p.SCANOMBRE ?? p.scanombre ?? p.nombre ?? p.barrio); }
+function codeOf(r: RawRecord) { const p = propsOf(r); return String(p.SCACODIGO ?? p.scacodigo ?? p.sector_catastral ?? p.cod_sector ?? ""); }
+function geomOf(r: RawRecord): GeoJsonGeometry | undefined { return propsOf(r).geometry as GeoJsonGeometry | undefined; }
 
-export function pickRecord(records: RawRecord[], sectorId?: string): RawRecord | undefined {
-  const sid = norm(sectorId);
-  const name = (r: RawRecord) => norm(r.SCANOMBRE ?? r.scanombre ?? r?.properties?.SCANOMBRE ?? r?.properties?.scanombre ?? r.nombre ?? r.barrio);
-  const code = (r: RawRecord) => norm(r.SCACODIGO ?? r.scacodigo ?? r?.properties?.SCACODIGO ?? r.sector_catastral ?? r.cod_sector);
-  return (
-    records.find((r) => sid && code(r) === sid) ||
-    records.find((r) => name(r).includes("pinar de suba")) ||
-    records.find((r) => name(r) === "el pinar") ||
-    records.find((r) => name(r).includes("pinar") && name(r).includes("suba")) ||
-    records.find((r) => name(r).includes("pinar")) ||
-    records[0]
-  );
+function toPolys(g?: GeoJsonGeometry): unknown[][][] {
+  if (!g) return [];
+  if (g.type === "Polygon") return [g.coordinates as unknown[][]];
+  if (g.type === "MultiPolygon") return (g.coordinates as unknown[][][]) || [];
+  return [];
 }
 
-export function toNeighborhoodInfo(r: RawRecord): NeighborhoodInfo {
-  const p = r?.properties ? { ...r.properties, geometry: r.geometry ?? r.properties.geometry } : r ?? {};
-  const geometry = (p.geometry ?? p.geo_shape ?? p.the_geom ?? p.geoshape) as GeoJsonGeometry | undefined;
-  const rawArea = Number(p["SHAPE.AREA"] ?? p.SHAPE_AREA ?? p.shape_area ?? p.st_area_sh ?? p.area_m2 ?? p.area ?? 0);
-  const rawLen = Number(p["SHAPE.LEN"] ?? p.SHAPE_LEN ?? p.shape_leng ?? p.st_length_ ?? p.perimetro_m ?? p.perimetro ?? 0);
+function mergeGeoms(gs: (GeoJsonGeometry | undefined)[]): GeoJsonGeometry {
+  const polys = gs.flatMap(toPolys);
+  if (polys.length === 0) return FALLBACK;
+  if (polys.length === 1) return { type: "Polygon", coordinates: polys[0] };
+  return { type: "MultiPolygon", coordinates: polys };
+}
+
+export function buildPinarInfo(records: RawRecord[], sectorId?: string): NeighborhoodInfo {
+  const sid = norm(sectorId);
+  const matches = records.filter((r) => nameOf(r).includes("pinar de suba") || (sid && norm(codeOf(r)) === sid));
+  const selected = matches.length ? matches : records.filter((r) => nameOf(r).includes("pinar") && nameOf(r).includes("suba"));
+  const list = selected.length ? selected : [];
+  const geometry = list.length ? mergeGeoms(list.map(geomOf)) : FALLBACK;
   const metrics = computeGeoMetrics(geometry);
-  const areaM2 = rawArea > 1000 ? rawArea : metrics.areaM2;
-  const perimeterM = rawLen > 100 ? rawLen : metrics.perimeterM;
+  const ids = list.map(codeOf).filter(Boolean).join(", ") || String(sectorId ?? "001324");
   return {
-    name: String(p.SCANOMBRE ?? p.scanombre ?? p.nombre ?? p.barrio ?? "Pinar de Suba"),
+    name: "El Pinar de Suba",
     locality: "Suba",
     city: "Bogotá",
-    sectorCatastralId: String(p.SCACODIGO ?? p.scacodigo ?? p.sector_catastral ?? p.cod_sector ?? process.env.PINAR_SUBA_SECTOR_ID ?? ""),
-    areaM2,
-    perimeterM,
-    geometry: geometry ?? { type: "Polygon", coordinates: [] },
-    source: process.env.BOGOTA_OPEN_DATA_SOURCE ?? "Datos Abiertos Bogotá",
+    sectorCatastralId: ids,
+    areaM2: metrics.areaM2,
+    perimeterM: metrics.perimeterM,
+    geometry,
+    source: process.env.BOGOTA_OPEN_DATA_SOURCE ?? "IDECA / Datos Abiertos Bogotá - Sector Catastral",
   };
 }

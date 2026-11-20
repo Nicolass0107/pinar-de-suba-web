@@ -1,14 +1,29 @@
+import L from "leaflet";
 import { Map as MapIcon } from "lucide-react";
-import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
+import { useEffect } from "react";
+import { GeoJSON, MapContainer, Marker, TileLayer, Tooltip, useMap } from "react-leaflet";
 import { Card } from "../../shared/components/Card";
 import type { Geometry } from "../../shared/types/contracts";
 
-function toGeoJson(geometry: Geometry) {
-  return { type: "Feature", properties: {}, geometry } as any;
+const CENTER: [number, number] = [4.7495, -74.0875];
+const labelIcon = L.divIcon({
+  className: "pinar-label",
+  html: '<div style="background:#065f46;color:#fff;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600;white-space:nowrap;border:2px solid #34d399">Barrio El Pinar de Suba</div>',
+  iconSize: [170, 24],
+  iconAnchor: [85, 12],
+});
+
+function FitBounds({ geometry }: { geometry: Geometry }) {
+  const map = useMap();
+  useEffect(() => {
+    const bounds = L.geoJSON(geometry as any).getBounds();
+    if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24], maxZoom: 16 });
+  }, [geometry, map]);
+  return null;
 }
 
 export function NeighborhoodMap({ geometry }: { geometry: Geometry }) {
-  const feature = toGeoJson(geometry);
+  const feature = { type: "Feature", properties: {}, geometry } as any;
   const hasCoords = Array.isArray(geometry.coordinates) && geometry.coordinates.length > 0;
   return (
     <Card className="overflow-hidden p-0">
@@ -19,9 +34,13 @@ export function NeighborhoodMap({ geometry }: { geometry: Geometry }) {
       <div className="h-[320px] p-3 sm:h-[380px]">
         <div className="h-full overflow-hidden rounded-2xl border border-emerald-100 shadow-inner">
           {hasCoords ? (
-            <MapContainer center={[4.536, -74.088]} zoom={15} scrollWheelZoom className="h-full w-full">
+            <MapContainer center={CENTER} zoom={15} scrollWheelZoom className="h-full w-full">
               <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <GeoJSON data={feature} pathOptions={{ color: "#047857", weight: 3, fillColor: "#34d399", fillOpacity: 0.25 }} />
+              <GeoJSON data={feature} pathOptions={{ color: "#1d4ed8", weight: 3, fillColor: "#34d399", fillOpacity: 0.28 }} />
+              <Marker position={CENTER} icon={labelIcon} interactive={false}>
+                <Tooltip permanent direction="top" offset={[0, -8]}>Barrio El Pinar de Suba</Tooltip>
+              </Marker>
+              <FitBounds geometry={geometry} />
             </MapContainer>
           ) : (
             <div className="flex h-full items-center justify-center bg-slate-100 text-sm text-slate-500">Geometría no disponible.</div>
@@ -29,7 +48,7 @@ export function NeighborhoodMap({ geometry }: { geometry: Geometry }) {
         </div>
       </div>
       <div className="flex items-center gap-2 border-t border-slate-200 px-5 py-3 text-xs text-slate-600">
-        <span className="inline-block h-3 w-3 rounded-sm border-2 border-emerald-700 bg-emerald-400/40" /> Límite catastral de Pinar de Suba (IDECA)
+        <span className="inline-block h-3 w-3 rounded-sm border-2 border-blue-700 bg-emerald-400/40" /> Límite catastral Barrio El Pinar de Suba (IDECA)
       </div>
     </Card>
   );
