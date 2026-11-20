@@ -20,8 +20,8 @@ async function main() {
   };
 
   const app = await buildServer(controllers);
-  const port = Number(process.env.PORT ?? 4001);
-  const host = process.env.HOST ?? "0.0.0.0";
+  const port = Number(process.env.PORT) || 4001;
+  const host = "0.0.0.0";
   await app.listen({ port, host });
 }
 
