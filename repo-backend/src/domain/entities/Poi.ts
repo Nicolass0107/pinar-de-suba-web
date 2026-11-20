@@ -3,6 +3,7 @@ export interface Poi {
   name: string;
   category: string;
   description?: string | null;
+  imageUrl?: string | null;
   latitude: number;
   longitude: number;
   createdAt: Date;
@@ -12,6 +13,7 @@ export interface CreatePoiInput {
   name: string;
   category: string;
   description?: string;
+  imageUrl?: string;
   latitude: number;
   longitude: number;
 }

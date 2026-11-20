@@ -7,17 +7,20 @@ import { NewsCreatePage } from "../features/news/NewsCreatePage";
 import { PoiPage } from "../features/poi/PoiPage";
 import { ReportFormPage } from "../features/reports/ReportFormPage";
 
-export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    children: [
-      { index: true, element: <NeighborhoodPage /> },
-      { path: "noticias", element: <NewsListPage /> },
-      { path: "noticias/nueva", element: <NewsCreatePage /> },
-      { path: "noticias/:id", element: <NewsDetailPage /> },
-      { path: "puntos", element: <PoiPage /> },
-      { path: "reportes", element: <ReportFormPage /> },
-    ],
-  },
-]);
+export const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <App />,
+      children: [
+        { index: true, element: <NeighborhoodPage /> },
+        { path: "noticias", element: <NewsListPage /> },
+        { path: "noticias/nueva", element: <NewsCreatePage /> },
+        { path: "noticias/:id", element: <NewsDetailPage /> },
+        { path: "puntos", element: <PoiPage /> },
+        { path: "reportes", element: <ReportFormPage /> },
+      ],
+    },
+  ],
+  { basename: import.meta.env.BASE_URL },
+);

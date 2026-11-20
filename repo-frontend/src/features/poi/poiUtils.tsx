@@ -14,8 +14,8 @@ export function poiIcon(category: string) {
 export const POI_FILTERS = [
   { label: "Todos", key: "Todos" },
   { label: "Parques", key: "parque" },
+  { label: "Colegios", key: "coleg" },
   { label: "Transporte", key: "transporte" },
-  { label: "Educación", key: "educ" },
   { label: "Comercio", key: "comerc" },
   { label: "Salud/Servicios", key: "salud-serv" },
 ] as const;

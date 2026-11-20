@@ -20,12 +20,12 @@ export function PoiPage() {
 
   return (
     <section>
-      <PageHeader title="Puntos de interés" subtitle="Parques, transporte, educación, comercio y servicios de Pinar de Suba y su entorno." />
+      <PageHeader title="Puntos de interés" subtitle="Parques, colegios, transporte, comercio y servicios de Pinar de Suba y su entorno." />
       <p className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-700"><SlidersHorizontal size={16} />Filtrar por tipo</p>
       <div className="mb-5 flex flex-wrap gap-2">
         {POI_FILTERS.map((f) => (
           <button key={f.key} type="button" onClick={() => setFilter(f.key)}
-            className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${filter === f.key ? "bg-emerald-700 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}>
+            className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${filter === f.key ? "bg-emerald-700 text-white" : "bg-white/80 text-slate-700 hover:bg-slate-100"}`}>
             {f.label}
           </button>
         ))}

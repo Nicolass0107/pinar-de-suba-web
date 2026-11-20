@@ -37,6 +37,7 @@ export interface Poi {
   name: string;
   category: string;
   description?: string | null;
+  imageUrl?: string | null;
   latitude: number;
   longitude: number;
 }
