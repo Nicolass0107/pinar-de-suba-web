@@ -6,6 +6,11 @@ import { parseOrReply } from "../validate.js";
 export class ReportController {
   constructor(private readonly service: ReportService) {}
 
+  list = async (_req: FastifyRequest, reply: FastifyReply) => {
+    const result = await this.service.list();
+    return reply.code(result.status).send(result.data);
+  };
+
   create = async (req: FastifyRequest, reply: FastifyReply) => {
     const body = parseOrReply(createReportSchema, req.body, reply);
     if (!body) return;

@@ -6,6 +6,7 @@ import { GetNeighborhoodInfo } from "./application/usecases/GetNeighborhoodInfo.
 import { GetNewsDetail } from "./application/usecases/GetNewsDetail.js";
 import { ListNews } from "./application/usecases/ListNews.js";
 import { ListPois } from "./application/usecases/ListPois.js";
+import { ListReports } from "./application/usecases/ListReports.js";
 import { BogotaOpenDataAdapter } from "./infrastructure/external/BogotaOpenDataAdapter.js";
 import { NeighborhoodController } from "./infrastructure/http/controllers/NeighborhoodController.js";
 import { NewsController } from "./infrastructure/http/controllers/NewsController.js";
@@ -28,7 +29,7 @@ async function main() {
     neighborhood: new NeighborhoodController(new GetNeighborhoodInfo(source, cacheRepo)),
     news: new NewsController(new ListNews(newsRepo), new GetNewsDetail(newsRepo), new CreateNews(newsRepo)),
     poi: new PoiController(new ListPois(poiRepo), new CreatePoi(poiRepo)),
-    report: new ReportController(new CreateReport(reportRepo)),
+    report: new ReportController(new CreateReport(reportRepo), new ListReports(reportRepo)),
   };
 
   const app = await buildServer(controllers);

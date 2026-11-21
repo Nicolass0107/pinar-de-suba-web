@@ -18,5 +18,6 @@ export async function registerRoutes(app: FastifyInstance, c: Controllers) {
   app.post("/api/news", c.news.create);
   app.get("/api/pois", c.poi.list);
   app.post("/api/pois", c.poi.create);
+  app.get("/api/reports", c.report.list);
   app.post("/api/reports", c.report.create);
 }

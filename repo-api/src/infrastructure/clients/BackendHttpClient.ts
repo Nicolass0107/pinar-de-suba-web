@@ -15,6 +15,7 @@ export class BackendHttpClient implements IBackendClient {
   createNews(input: CreateNewsInput) { return this.request("/news", "POST", input); }
   listPois() { return this.request("/pois"); }
   createPoi(input: CreatePoiInput) { return this.request("/pois", "POST", input); }
+  listReports() { return this.request("/reports"); }
   createReport(input: CreateReportInput) { return this.request("/reports", "POST", input); }
 
   private async request(path: string, method = "GET", body?: unknown): Promise<BackendResult<unknown>> {

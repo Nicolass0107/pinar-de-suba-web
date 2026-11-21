@@ -3,6 +3,11 @@ import type { IReportRepository } from "../../domain/repositories/IReportReposit
 import { prisma } from "./PrismaClient.js";
 
 export class PrismaReportRepository implements IReportRepository {
+  async list(): Promise<Report[]> {
+    const rows = await prisma.report.findMany({ orderBy: { createdAt: "desc" } });
+    return rows.map((r) => ({ ...r, status: r.status as Report["status"] }));
+  }
+
   async create(input: CreateReportInput): Promise<Report> {
     const created = await prisma.report.create({
       data: {

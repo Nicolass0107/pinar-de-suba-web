@@ -4,6 +4,10 @@ import type { IBackendClient } from "../ports/IBackendClient.js";
 export class ReportService {
   constructor(private readonly backend: IBackendClient) {}
 
+  list() {
+    return this.backend.listReports();
+  }
+
   create(input: CreateReportInput) {
     return this.backend.createReport(input);
   }

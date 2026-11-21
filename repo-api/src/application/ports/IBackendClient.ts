@@ -14,5 +14,6 @@ export interface IBackendClient {
   createNews(input: CreateNewsInput): Promise<BackendResult<unknown>>;
   listPois(): Promise<BackendResult<unknown>>;
   createPoi(input: CreatePoiInput): Promise<BackendResult<unknown>>;
+  listReports(): Promise<BackendResult<unknown>>;
   createReport(input: CreateReportInput): Promise<BackendResult<unknown>>;
 }
