@@ -11,13 +11,22 @@ export class GetNeighborhoodInfo {
   async execute(): Promise<NeighborhoodInfo> {
     const cached = await this.cache.get();
     if (cached && this.isValid(cached)) return cached;
-    const info = await this.source.getNeighborhoodInfo();
-    await this.cache.save(info);
-    return info;
+    try {
+      const info = await this.source.getNeighborhoodInfo();
+      try { await this.cache.save(info); } catch { /* ignore cache write errors */ }
+      return info;
+    } catch {
+      return cached ?? (await this.source.getNeighborhoodInfo());
+    }
   }
 
   private isValid(info: NeighborhoodInfo): boolean {
-    return info.areaM2 > 0 && info.perimeterM > 0 && !/seed/i.test(info.source);
+    return (
+      info.areaM2 > 0 &&
+      info.perimeterM > 0 &&
+      Array.isArray(info.geometry?.coordinates) &&
+      info.geometry.coordinates.length > 0
+    );
   }
 }
 

@@ -51,3 +51,7 @@ export function buildPinarInfo(records: RawRecord[], sectorId?: string): Neighbo
     source: process.env.BOGOTA_OPEN_DATA_SOURCE ?? "IDECA / Datos Abiertos Bogotá - Sector Catastral",
   };
 }
+
+export function getFallbackInfo(sectorId?: string): NeighborhoodInfo {
+  return buildPinarInfo([], sectorId);
+}
