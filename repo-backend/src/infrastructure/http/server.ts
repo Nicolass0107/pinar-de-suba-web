@@ -1,12 +1,10 @@
 import cors from "@fastify/cors";
-import rateLimit from "@fastify/rate-limit";
 import Fastify, { type FastifyInstance } from "fastify";
 import { registerRoutes, type Controllers } from "./routes.js";
 
 export async function buildServer(controllers: Controllers): Promise<FastifyInstance> {
   const app = Fastify({ logger: true, trustProxy: true });
   await app.register(cors, { origin: true });
-  await app.register(rateLimit, { max: 1000, timeWindow: "1 minute" });
 
   app.get("/health", async () => ({ status: "ok" }));
   await registerRoutes(app, controllers);

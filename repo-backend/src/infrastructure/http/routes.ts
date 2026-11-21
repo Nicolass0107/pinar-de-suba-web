@@ -12,7 +12,7 @@ export interface Controllers {
 }
 
 export async function registerRoutes(app: FastifyInstance, c: Controllers) {
-  app.get("/neighborhood/info", { config: { rateLimit: false } }, c.neighborhood.info);
+  app.get("/neighborhood/info", c.neighborhood.info);
   app.get("/news", c.news.list);
   app.get("/news/:id", c.news.getById);
   app.post("/news", c.news.create);
