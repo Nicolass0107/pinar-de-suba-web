@@ -9,15 +9,12 @@ export class GetNeighborhoodInfo {
   ) {}
 
   async execute(): Promise<NeighborhoodInfo> {
-    const cached = await this.cache.get();
+    let cached: NeighborhoodInfo | null = null;
+    try { cached = await this.cache.get(); } catch { cached = null; }
     if (cached && this.isValid(cached)) return cached;
-    try {
-      const info = await this.source.getNeighborhoodInfo();
-      try { await this.cache.save(info); } catch { /* ignore cache write errors */ }
-      return info;
-    } catch {
-      return cached ?? (await this.source.getNeighborhoodInfo());
-    }
+    const info = await this.source.getNeighborhoodInfo();
+    try { await this.cache.save(info); } catch { /* ignore cache write errors */ }
+    return this.isValid(info) ? info : cached ?? info;
   }
 
   private isValid(info: NeighborhoodInfo): boolean {
