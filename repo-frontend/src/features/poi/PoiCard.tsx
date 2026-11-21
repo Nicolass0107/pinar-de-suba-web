@@ -2,9 +2,9 @@ import { MapPin } from "lucide-react";
 import type { Poi } from "../../shared/types/contracts";
 import { poiIcon } from "./poiUtils";
 
-export function PoiCard({ poi }: { poi: Poi }) {
+export function PoiCard({ poi, onSelect, selected }: { poi: Poi; onSelect: (p: Poi) => void; selected?: boolean }) {
   return (
-    <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg">
+    <article onClick={() => onSelect(poi)} className={`cursor-pointer overflow-hidden rounded-2xl border bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg ${selected ? "border-emerald-500 ring-2 ring-emerald-200" : "border-slate-200"}`}>
       <div className="h-36 w-full bg-slate-100">
         {poi.imageUrl ? (
           <img src={poi.imageUrl} alt={poi.name} className="h-full w-full object-cover" loading="lazy" />

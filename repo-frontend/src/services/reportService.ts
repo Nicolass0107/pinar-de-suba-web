@@ -1,8 +1,11 @@
 import { httpClient } from "./httpClient";
-import type { CreateReportInput } from "../shared/types/contracts";
+import type { CreateReportInput, Report } from "../shared/types/contracts";
 
 export const reportService = {
-  create(input: CreateReportInput): Promise<unknown> {
+  list(): Promise<{ items: Report[] }> {
+    return httpClient.get("/api/reports");
+  },
+  create(input: CreateReportInput): Promise<Report> {
     return httpClient.post("/api/reports", input);
   },
 };

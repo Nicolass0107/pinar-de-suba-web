@@ -3,6 +3,7 @@ import { Card } from "../../shared/components/Card";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { TextField } from "../../shared/components/TextField";
 import { ReportInfo } from "./ReportInfo";
+import { ReportList } from "./ReportList";
 import { useReportForm } from "./useReports";
 
 const CATEGORIES = ["Seguridad", "Iluminación", "Vías", "Aseo", "Ruido", "Otro"];
@@ -30,6 +31,7 @@ export function ReportFormPage() {
         </Card>
         <ReportInfo />
       </div>
+      <ReportList items={f.reports} loading={f.loading} />
     </section>
   );
 }

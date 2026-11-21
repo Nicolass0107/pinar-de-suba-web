@@ -1,8 +1,10 @@
 import { SlidersHorizontal } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PageHeader } from "../../shared/components/PageHeader";
 import { ErrorMessage, Loading } from "../../shared/components/StateMessage";
+import type { Poi } from "../../shared/types/contracts";
 import { PoiCard } from "./PoiCard";
+import { PoiDetailMap } from "./PoiDetailMap";
 import { POI_FILTERS } from "./poiUtils";
 import { usePois } from "./usePois";
 
@@ -16,7 +18,11 @@ function matches(poiCat: string, key: string) {
 export function PoiPage() {
   const { items, loading, error } = usePois();
   const [filter, setFilter] = useState("Todos");
+  const [selected, setSelected] = useState<Poi | null>(null);
+  const mapRef = useRef<HTMLDivElement | null>(null);
   const filtered = useMemo(() => items.filter((p) => matches(p.category, filter)), [items, filter]);
+
+  useEffect(() => { if (selected) mapRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }, [selected]);
 
   return (
     <section>
@@ -33,10 +39,13 @@ export function PoiPage() {
       {loading && <Loading text="Cargando puntos de interés..." />}
       {error && <ErrorMessage message={error} />}
       {!loading && !error && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((p) => <PoiCard key={p.id} poi={p} />)}
-          {filtered.length === 0 && <p className="text-sm text-slate-500">No hay puntos en esta categoría.</p>}
-        </div>
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((p) => <PoiCard key={p.id} poi={p} onSelect={setSelected} selected={selected?.id === p.id} />)}
+            {filtered.length === 0 && <p className="text-sm text-slate-500">No hay puntos en esta categoría.</p>}
+          </div>
+          {selected && <div ref={mapRef} className="mt-6 scroll-mt-24"><PoiDetailMap poi={selected} /></div>}
+        </>
       )}
     </section>
   );

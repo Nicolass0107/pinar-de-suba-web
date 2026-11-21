@@ -49,3 +49,14 @@ export interface CreateReportInput {
   latitude?: number;
   longitude?: number;
 }
+
+export interface Report {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  status: string;
+  createdAt: string;
+}
