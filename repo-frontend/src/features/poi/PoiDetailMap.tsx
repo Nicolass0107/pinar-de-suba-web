@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { Card } from "../../shared/components/Card";
 import type { Poi } from "../../shared/types/contracts";
-import { poiEsriFallback, poiPhotoSrc } from "./poiUtils";
 
 const pinIcon = L.divIcon({
   className: "poi-pin",
@@ -17,14 +16,15 @@ function MapSync({ lat, lng }: { lat: number; lng: number }) {
   return null;
 }
 
-export function PoiDetailMap({ poi, index = 0 }: { poi: Poi; index?: number }) {
-  const src = poiPhotoSrc(poi, index);
-  const fallback = poiEsriFallback(poi.latitude, poi.longitude);
+export function PoiDetailMap({ poi }: { poi: Poi; index?: number }) {
   return (
     <Card className="overflow-hidden p-0">
       <div className="grid md:grid-cols-2">
         <div className="h-64 bg-slate-100 md:h-auto">
-          <img src={src} alt={poi.name} className="h-full min-h-64 w-full object-cover" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = fallback; }} />
+          <MapContainer center={[poi.latitude, poi.longitude]} zoom={16} scrollWheelZoom={false} dragging={false} doubleClickZoom={false} touchZoom={false} zoomControl={false} attributionControl={false} className="h-full min-h-64 w-full">
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <Marker position={[poi.latitude, poi.longitude]} icon={pinIcon} interactive={false} />
+          </MapContainer>
         </div>
         <div className="p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">{poi.category}</p>
