@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { Card } from "../../shared/components/Card";
 import type { Poi } from "../../shared/types/contracts";
-import { poiIcon } from "./poiUtils";
+import { poiFallbackImage } from "./poiUtils";
 
 function FlyTo({ lat, lng }: { lat: number; lng: number }) {
   const map = useMap();
@@ -11,11 +11,12 @@ function FlyTo({ lat, lng }: { lat: number; lng: number }) {
 }
 
 export function PoiDetailMap({ poi }: { poi: Poi }) {
+  const fallback = poiFallbackImage(poi.category);
   return (
     <Card className="overflow-hidden p-0">
       <div className="grid md:grid-cols-2">
         <div className="h-64 bg-slate-100 md:h-auto">
-          {poi.imageUrl ? <img src={poi.imageUrl} alt={poi.name} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-emerald-700">{poiIcon(poi.category)}</div>}
+          <img src={poi.imageUrl || fallback} alt={poi.name} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = fallback; }} />
         </div>
         <div className="p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">{poi.category}</p>

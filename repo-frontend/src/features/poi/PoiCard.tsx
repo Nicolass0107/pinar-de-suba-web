@@ -1,16 +1,13 @@
 import { MapPin } from "lucide-react";
 import type { Poi } from "../../shared/types/contracts";
-import { poiIcon } from "./poiUtils";
+import { poiFallbackImage, poiIcon } from "./poiUtils";
 
 export function PoiCard({ poi, onSelect, selected }: { poi: Poi; onSelect: (p: Poi) => void; selected?: boolean }) {
+  const fallback = poiFallbackImage(poi.category);
   return (
     <article onClick={() => onSelect(poi)} className={`cursor-pointer overflow-hidden rounded-2xl border bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg ${selected ? "border-emerald-500 ring-2 ring-emerald-200" : "border-slate-200"}`}>
       <div className="h-36 w-full bg-slate-100">
-        {poi.imageUrl ? (
-          <img src={poi.imageUrl} alt={poi.name} className="h-full w-full object-cover" loading="lazy" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-emerald-700">{poiIcon(poi.category)}</div>
-        )}
+        <img src={poi.imageUrl || fallback} alt={poi.name} className="h-full w-full object-cover" loading="lazy" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = fallback; }} />
       </div>
       <div className="p-4">
         <div className="mb-2 flex items-center gap-2">
