@@ -41,10 +41,10 @@ export function PoiPage() {
       {!loading && !error && (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((p) => <PoiCard key={p.id} poi={p} onSelect={setSelected} selected={selected?.id === p.id} />)}
+            {filtered.map((p, i) => <PoiCard key={p.id} poi={p} index={i} onSelect={setSelected} selected={selected?.id === p.id} />)}
             {filtered.length === 0 && <p className="text-sm text-slate-500">No hay puntos en esta categoría.</p>}
           </div>
-          {selected && <div ref={mapRef} className="mt-6 scroll-mt-24"><PoiDetailMap poi={selected} /></div>}
+          {selected && <div ref={mapRef} className="mt-6 scroll-mt-24"><PoiDetailMap poi={selected} index={filtered.findIndex((p) => p.id === selected.id)} /></div>}
         </>
       )}
     </section>

@@ -21,6 +21,21 @@ export function poiCategoryLabel(category: string) {
   return "Servicio comunitario";
 }
 
+export function poiPhotoSrc(poi: { id: string; imageUrl?: string | null }, index: number) {
+  const base = import.meta.env.BASE_URL || "/";
+  const local = `${base}lugares/lugar-${(index % 6) + 1}.jpg`;
+  const raw = poi.imageUrl?.trim();
+  if (!raw) return local;
+  if (raw.startsWith("http")) return raw;
+  return `${base}${raw.replace(/^\/+/, "")}`;
+}
+
+export function poiEsriFallback(lat: number, lng: number) {
+  const d = 0.0035;
+  const box = [lng - d, lat - d, lng + d, lat + d].map((n) => n.toFixed(6)).join(",");
+  return `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export?bbox=${box}&bboxSR=4326&imageSR=4326&size=900,600&format=jpg&f=image`;
+}
+
 export const POI_FILTERS = [
   { label: "Todos", key: "Todos" },
   { label: "Parques", key: "parque" },
