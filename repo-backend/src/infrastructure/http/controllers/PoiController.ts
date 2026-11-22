@@ -3,7 +3,7 @@ import { CreatePoi } from "../../../application/usecases/CreatePoi.js";
 import { ListPois } from "../../../application/usecases/ListPois.js";
 
 type CreateBody = {
-  name: string; category: string; description?: string; imageUrl?: string; latitude: number; longitude: number;
+  name: string; category: string; description?: string; address?: string; imageUrl?: string; latitude: number; longitude: number;
 };
 
 export class PoiController {
@@ -18,7 +18,7 @@ export class PoiController {
     const b = req.body;
     const created = await this.createPoi.execute({
       name: b.name, category: b.category, description: b.description,
-      imageUrl: b.imageUrl, latitude: b.latitude, longitude: b.longitude,
+      address: b.address, imageUrl: b.imageUrl, latitude: b.latitude, longitude: b.longitude,
     });
     const { createdAt, ...rest } = created;
     return reply.code(201).send(rest);

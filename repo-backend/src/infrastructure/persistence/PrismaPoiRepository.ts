@@ -13,6 +13,7 @@ export class PrismaPoiRepository implements IPoiRepository {
         name: input.name,
         category: input.category,
         description: input.description,
+        address: input.address,
         imageUrl: input.imageUrl,
         latitude: input.latitude,
         longitude: input.longitude,

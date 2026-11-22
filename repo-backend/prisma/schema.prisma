@@ -21,6 +21,7 @@ model PointOfInterest {
   name        String
   category    String
   description String?
+  address     String?
   imageUrl    String?
   latitude    Float
   longitude   Float
