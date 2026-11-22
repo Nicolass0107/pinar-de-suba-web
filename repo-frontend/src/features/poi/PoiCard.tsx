@@ -1,23 +1,13 @@
 import { MapPin } from "lucide-react";
-import { useState } from "react";
 import type { Poi } from "../../shared/types/contracts";
-import { poiCategoryLabel, poiIcon } from "./poiUtils";
+import { PoiMiniMap } from "./PoiMiniMap";
+import { poiIcon } from "./poiUtils";
 
 export function PoiCard({ poi, onSelect, selected }: { poi: Poi; onSelect: (p: Poi) => void; selected?: boolean }) {
-  const [imgErr, setImgErr] = useState(false);
-  const showImg = Boolean(poi.imageUrl) && !imgErr;
   return (
     <article onClick={() => onSelect(poi)} className={`cursor-pointer overflow-hidden rounded-2xl border bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg ${selected ? "border-emerald-500 ring-2 ring-emerald-200" : "border-slate-200"}`}>
-      <div className="flex h-36 w-full items-center justify-center bg-emerald-50">
-        {showImg ? (
-          <img src={poi.imageUrl!} alt={poi.name} className="h-full w-full object-cover" loading="lazy" onError={() => setImgErr(true)} />
-        ) : (
-          <div className="px-4 text-center">
-            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">{poiIcon(poi.category)}</div>
-            <p className="text-xs font-medium text-emerald-900">{poiCategoryLabel(poi.category)}</p>
-            <p className="mt-1 text-[11px] text-slate-600">{poi.address || "Pinar de Suba, Suba, Bogotá"}</p>
-          </div>
-        )}
+      <div className="h-36 w-full bg-slate-100">
+        <PoiMiniMap poi={poi} />
       </div>
       <div className="p-4">
         <div className="mb-2 flex items-center gap-2">

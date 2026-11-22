@@ -1,9 +1,8 @@
 import L from "leaflet";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { Card } from "../../shared/components/Card";
 import type { Poi } from "../../shared/types/contracts";
-import { poiCategoryLabel, poiIcon } from "./poiUtils";
 
 const pinIcon = L.divIcon({
   className: "poi-pin",
@@ -18,20 +17,14 @@ function MapSync({ lat, lng }: { lat: number; lng: number }) {
 }
 
 export function PoiDetailMap({ poi }: { poi: Poi }) {
-  const [imgErr, setImgErr] = useState(false);
-  useEffect(() => setImgErr(false), [poi.id]);
-  const showImg = Boolean(poi.imageUrl) && !imgErr;
   return (
     <Card className="overflow-hidden p-0">
       <div className="grid md:grid-cols-2">
-        <div className="h-64 bg-emerald-50 md:h-auto">
-          {showImg ? <img src={poi.imageUrl!} alt={poi.name} className="h-full w-full object-cover" onError={() => setImgErr(true)} /> : (
-            <div className="flex h-full min-h-64 flex-col items-center justify-center px-6 text-center">
-              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">{poiIcon(poi.category)}</div>
-              <p className="text-sm font-semibold text-emerald-900">{poiCategoryLabel(poi.category)}</p>
-              <p className="mt-2 text-sm text-slate-600">{poi.address || "Pinar de Suba, Suba, Bogotá"}</p>
-            </div>
-          )}
+        <div className="h-64 bg-slate-100 md:h-auto">
+          <MapContainer center={[poi.latitude, poi.longitude]} zoom={16} scrollWheelZoom={false} dragging={false} doubleClickZoom={false} touchZoom={false} zoomControl={false} attributionControl={false} className="h-full min-h-64 w-full">
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <Marker position={[poi.latitude, poi.longitude]} icon={pinIcon} interactive={false} />
+          </MapContainer>
         </div>
         <div className="p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">{poi.category}</p>
