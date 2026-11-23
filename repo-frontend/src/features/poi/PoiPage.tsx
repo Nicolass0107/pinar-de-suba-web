@@ -36,7 +36,7 @@ export function PoiPage() {
           </button>
         ))}
       </div>
-      {loading && <Loading text="Cargando puntos de interés..." />}
+      {loading && <Loading text="Cargando información de Pinar de Suba..." />}
       {error && <ErrorMessage message={error} />}
       {!loading && !error && (
         <>

@@ -25,7 +25,7 @@ export function NewsListPage() {
         <Link to="/noticias/nueva" className="mb-6 inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800"><PlusCircle size={16} />Publicar noticia</Link>
       </div>
       <NewsFilters value={category} onChange={setCategory} />
-      {loading && <Loading text="Cargando noticias..." />}
+      {loading && <Loading text="Cargando información de Pinar de Suba..." />}
       {error && <ErrorMessage message={error} />}
       {!loading && !error && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
